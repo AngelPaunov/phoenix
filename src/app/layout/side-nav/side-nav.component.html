@@ -1,0 +1,32 @@
+<mat-drawer-container class="side-nav" hasBackdrop="true" autosize>
+    <mat-drawer #drawer mode="side" class="side-nav-menu">
+      <h3>Phoenix</h3>
+  
+      <mat-selection-list [multiple]="false" (selectionChange)="drawer.toggle()">
+        <mat-list-option [routerLink]="['/home']">
+          Home
+        </mat-list-option>
+        <mat-list-option [routerLink]="['/auth/login']">
+          Login
+        </mat-list-option>
+        <mat-list-option [routerLink]="['/auth/sign-up']">
+          Sign up
+        </mat-list-option>
+        <mat-list-option *ngIf="!isLoggedIn"
+        (click)='logout()'>
+          Log out
+        </mat-list-option>
+      </mat-selection-list>
+    </mat-drawer>
+  
+    <mat-drawer-content class="side-nav-content">
+      <header class="main-header">
+        <button mat-icon-button (click)="drawer.toggle()" class="menu-button" aria-label="Toggle menu">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </header>
+  
+      <router-outlet></router-outlet>
+  
+    </mat-drawer-content>
+  </mat-drawer-container>

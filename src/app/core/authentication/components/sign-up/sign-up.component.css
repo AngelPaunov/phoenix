@@ -1,0 +1,10 @@
+.sign-up-form-container{
+    display:flex;
+}
+.sign-up-form-field{
+    width: 200px;
+}
+.sign-up-form{
+    margin:auto;
+    text-align: center;
+}

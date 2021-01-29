@@ -1,0 +1,9 @@
+.side-nav{
+    height: 100%;
+}
+.side-nav-content, .side-nav-menu{
+    padding: 15px;
+}
+.main-header{
+    margin-bottom: 5vh;
+}
