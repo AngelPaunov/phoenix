@@ -6,7 +6,6 @@ import { HomeComponent } from './core/home/home.component';
 const routes: Routes = [
   { path: 'auth', loadChildren: () => import("./core/authentication/authentication.module").then(m => m.AuthenticationModule) },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'cart', component: HomeComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
