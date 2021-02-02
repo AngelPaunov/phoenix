@@ -3,19 +3,11 @@
       <h3>Phoenix</h3>
   
       <mat-selection-list [multiple]="false" (selectionChange)="drawer.toggle()">
-        <mat-list-option [routerLink]="['/home']">
-          Home
-        </mat-list-option>
-        <mat-list-option [routerLink]="['/auth/login']">
-          Login
-        </mat-list-option>
-        <mat-list-option [routerLink]="['/auth/sign-up']">
-          Sign up
-        </mat-list-option>
-        <mat-list-option *ngIf="!isLoggedIn"
-        (click)='logout()'>
-          Log out
-        </mat-list-option>
+        <mat-list-option [routerLink]="['/home']">Home</mat-list-option>
+        <mat-list-option [routerLink]="['/cart']">cart</mat-list-option>
+        <mat-list-option [routerLink]="['/auth/login']" *ngIf="!isLoggedIn">Login</mat-list-option>
+        <mat-list-option [routerLink]="['/auth/sign-up']" *ngIf="!isLoggedIn">Sign up</mat-list-option>
+        <mat-list-option *ngIf="isLoggedIn" (click)='logout()'>Log out</mat-list-option>
       </mat-selection-list>
     </mat-drawer>
   

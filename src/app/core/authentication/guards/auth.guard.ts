@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { AuthenticationService } from '../services/authentication.service';
 
 @Injectable({
@@ -8,17 +9,23 @@ import { AuthenticationService } from '../services/authentication.service';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthenticationService, private router: Router) { }
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (!this.authService.accessToken) {
-      this.router.navigateByUrl('/auth/login');
+      this.router.navigate(['/auth/login'], {
+        queryParams: { returnUrl: state.url },
+      });
 
       return false;
     }
 
-    let url = route.url.toString().toLocaleLowerCase();
-    if (url === 'login' || url === 'sign-up') {
-      return false;
-    }
+    this.refreshAccessTokenIfExpired();
+
     return true;
+  }
+
+  private refreshAccessTokenIfExpired() {
+    if (this.authService.isAccessTokenExpired) {
+      this.authService.getNewAccessToken().pipe(take(1)).subscribe();
+    }
   }
 }

@@ -12,9 +12,9 @@ export class SideNavComponent implements OnInit {
   constructor(private authService: AuthenticationService,
     private router: Router) { }
 
-public get isLoggedIn(){
-  return this.authService.accessToken;
-}
+  public get isLoggedIn() {
+    return !!this.authService.accessToken;
+  }
 
   ngOnInit(): void {
   }

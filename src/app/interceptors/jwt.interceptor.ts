@@ -6,7 +6,7 @@ import {
   HttpInterceptor,
   HttpErrorResponse
 } from '@angular/common/http';
-import { empty, Observable, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { AuthenticationService } from '../core/authentication/services/authentication.service';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 
@@ -22,7 +22,7 @@ export class JwtInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && !this.refreshingAccessToken) {
-          this.handleHttpError401(request, next);
+          return this.handleHttpError401(request, next);
         }
 
         return throwError(error);
@@ -31,12 +31,12 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   addAuthToken(request: HttpRequest<any>): HttpRequest<any> {
-    const jwtToken = this.authService.accessToken;
-    if (jwtToken) {
+    const accessToken = this.authService.accessToken;
+    if (accessToken) {
       return request.clone(
         {
           setHeaders: {
-            Authorization: `Bearer ${jwtToken}`
+            authorization: `${accessToken}`
           }
         });
     }
@@ -55,13 +55,15 @@ export class JwtInterceptor implements HttpInterceptor {
         }),
         switchMap(() => {
           request = this.addAuthToken(request);
+
           return next.handle(request);
         }),
         catchError(error => {
-          console.log(error);
+          console.log(`Error occured while refreshing access token: ${error}`);
           this.authService.logout();
-          return empty();
+
+          return throwError(error);
         })
-      )
+      );
   }
 }

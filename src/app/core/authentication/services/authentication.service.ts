@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiPaths } from 'src/environments/api-paths.enum';
 import { environment } from 'src/environments/environment';
@@ -22,6 +22,16 @@ export class AuthenticationService {
     return localStorage.getItem(this.ACCESS_TOKEN);
   }
 
+  public get isAccessTokenExpired() {
+    if (!this.accessToken) {
+      return false;
+    }
+
+    const expiry = (JSON.parse(atob(this.accessToken.split('.')[1]))).exp;
+
+    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+  }
+
   login(loginCredentials: LoginModel) {
     return this.httpClient.post<Tokens>(`${environment.baseApiUrl}${ApiPaths.Login}`, loginCredentials)
       .pipe(
@@ -35,11 +45,13 @@ export class AuthenticationService {
   }
 
   getNewAccessToken() {
-    return this.httpClient.get(`${environment.baseApiUrl}${ApiPaths.Refresh}`, {
+    return this.httpClient.get<Tokens>(`${environment.baseApiUrl}${ApiPaths.Refresh}`, {
       headers: {
-        'X-RefreshToken':this.refreshToken
+        'authorization': this.refreshToken
       }
-    });
+    }).pipe(
+      tap(tokens => this.setTokens(tokens))
+    );
   }
 
   logout() {

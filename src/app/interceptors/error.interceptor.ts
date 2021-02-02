@@ -7,7 +7,7 @@ import {
   HttpErrorResponse
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError} from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { AuthenticationService } from '../core/authentication/services/authentication.service';
 
@@ -23,10 +23,9 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   private handleHttpError(error: HttpErrorResponse) {
     let errorMessage = this.setErrorMessage(error);
-    // this.autoLogout(error);
-
+    
     console.log(errorMessage);
-
+    
     return throwError(errorMessage);
   }
 
@@ -36,11 +35,5 @@ export class ErrorInterceptor implements HttpInterceptor {
     }
 
     return `Server returned code: ${error.status}\nError message is: ${error.message}`;
-  }
-
-  private autoLogout(error: HttpErrorResponse) {
-    if ([401, 403].includes(error.status) && this.authService.accessToken) {
-      this.authService.logout();
-    }
   }
 }
